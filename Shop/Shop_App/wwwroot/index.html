@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="site.css" rel="stylesheet" />
+    <title>Shop</title>
+</head>
+<body>
+    <h1 class="header">Insert product</h1>
+
+
+    <form class="form" method="post" id="product-form" onsubmit="event.preventDefault(); CallService()">
+        <label id="response" style="display:none;"><strong></strong></label>
+        <br />
+        <label for="Product">Name</label>
+        <input id="Name" type="text" placeholder="string" />
+        <label id="name-error" style="display:none; color:red">Name cannot be empty</label>
+        <br />
+        <label for="Likes">Likes</label>
+        <input id="Likes" type="number" step="1" placeholder="integer" />
+        <label id="likes-error" style="display:none; color:red">Likes must be an integer</label>
+        <br />
+        <label for="Dislikes">Dislikes</label>
+        <input id="Dislikes" type="number" step="1" placeholder="integer" />
+        <label id="dislikes-error" style="display:none; color:red">Disikes must be an integer</label>
+        <br />
+        <button>Insert</button>
+    </form>
+</body>
+</html>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
+<script>
+
+    function CallService() {
+        debugger;
+        let name = $('#Name').val();
+        if (name.length <= 0) {
+            $('#name-error').show();
+            return;
+        } else {
+            $('#name-error').hide();
+        }
+        let likes = $('#Likes').val();
+        if (!Number.isInteger(+likes)) {
+            $('#likes-error').show();
+            return;
+        } else {
+            $('#likes-error').hide();
+        }
+        let dislikes = $('#Dislikes').val();
+        if (!Number.isInteger(+dislikes)) {
+            $('#dislikes-error').show();
+            return;
+        } else {
+            $('#dislikes-error').hide();
+        }
+
+        let soapRequestBody = 
+            `<?xml version="1.0" encoding="utf-8"?>
+                <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                  <soap:Body>
+                    <Insert xmlns="http://tempuri.org/">
+                      <Name>${name}</Name>
+                      <Likes>${likes}</Likes>
+                      <Dislikes>${dislikes}</Dislikes>
+                    </Insert>
+                  </soap:Body>
+                </soap:Envelope>`
+
+        $.ajax({
+            url: "https://localhost:44314/ShopService.svc",
+            type: "POST",
+            data: soapRequestBody,
+            success: function (data) {
+                let color = 'red';
+                let text = 'Failed!';
+
+                if (data != null) {
+                    color = 'green';
+                    text = 'Success!';
+                }
+                let responseElement = $('#response');
+                $(responseElement).text(text);
+                $(responseElement).css('color', color);
+                $(responseElement).show();
+            }
+        })
+    }
+</script>
