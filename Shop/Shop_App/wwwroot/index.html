@@ -72,8 +72,10 @@
                   </soap:Body>
                 </soap:Envelope>`
 
+        let url = window.location + 'ShopService.svc';
+
         $.ajax({
-            url: "https://localhost:44314/ShopService.svc",
+            url: url,
             type: "POST",
             data: soapRequestBody,
             success: function (data) {
